@@ -1,0 +1,17 @@
+\documentclass{article}
+
+% packages and definitions that needs to be defined in main.tex
+\usepackage{acronym}
+\usepackage{hyperref}
+
+\newcommand{\acrotarget}[2]{
+    \acrodef{#1}{#2}
+    \hypertarget{#1}{#1}: {#2}
+}
+\newcommand{\aclink}[1]{\hyperlink{#1}{\ac{#1}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+    \include{textsrc} % a source file
+    \include{abbr} % an abbreviation file
+\end{document}
