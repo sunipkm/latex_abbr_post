@@ -52,6 +52,7 @@ def store_abbrs(tokens: List[str], filename: str):
     outname = filename.replace('_template.tex', '.tex')
     first_letter = '0'
     tokens = list(set(tokens))
+    tokens.sort()
     for token in tokens:
         if token[0] != first_letter:
             first_letter = token[0]
@@ -83,10 +84,37 @@ def process_file(filename: str, dryrun: bool = True)->List[str]:
     store_file(outname, text)
     return tokens
 
+def restore_file(filename: str, from_dryrun: bool = True)->str:
+    """Restore a file from process_file.
+
+    Args:
+        filename (str): File name.
+        from_dryrun (bool, optional): Whether to restore from a dry run. Defaults to True.
+
+    Returns:
+        str: File name of the source file
+    """
+    if '.tex' not in filename:
+        raise ValueError("File must be a .tex file")
+    if from_dryrun:
+        outname = filename.replace('.tex', '_out.tex')
+    else:
+        outname = filename.replace('.tex', '_old.tex')
+    if not os.path.isfile(outname):
+        raise FileNotFoundError
+    os.rename(outname, filename)
+    return outname
+
 # %% Process the file
+dryrun = False
 input_files = ['textsrc.tex'] # list of files to process
 tokens = [] # list of tokens
 for file in input_files:
-    itokens = process_file(file, dryrun=False)
+    itokens = process_file(file, dryrun=dryrun)
     tokens += itokens
 store_abbrs(tokens, 'abbr_template.tex')
+
+# %% Restore files
+for file in input_files: restore_file(file, from_dryrun=dryrun)
+
+# %%
